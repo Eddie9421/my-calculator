@@ -5,8 +5,8 @@ let operator = "";
 let rightOperand = "";
 let result = 0;
 let leftOperandSet = false;
-// let rightOperandSet = false;
 let clearDisplayOnNextDigit = false;
+let lastOperation = "";
 
 function add(numA, numB) {
     return numA + numB;
@@ -25,18 +25,17 @@ function divide(numA, numB) {
 }
 
 function operate(leftOperand, operator, rightOperand) {
-    leftOperand = parseInt(leftOperand);
-    rightOperand = parseInt(rightOperand);
+    leftOperand = Number(leftOperand);
+    rightOperand = Number(rightOperand);
     switch (operator) {
         case '+':
-            return add(leftOperand, rightOperand);
+            return Math.round(add(leftOperand, rightOperand) * 100) / 100;
         case '-':
-            return subtract(leftOperand, rightOperand);
+            return Math.round(subtract(leftOperand, rightOperand) * 100) / 100;
         case '*':
-            return multiply(leftOperand, rightOperand);
+            return Math.round(multiply(leftOperand, rightOperand) * 100) / 100;
         case '/':
-            return divide(leftOperand, rightOperand);
-        
+            return Math.round(divide(leftOperand, rightOperand) * 100) / 100;
     }
 }
 
@@ -71,35 +70,43 @@ window.addEventListener("load", () => {
     const buttonsDiv = document.querySelector(".buttons");
     const displayDiv = document.querySelector(".display");
     buttonsDiv.addEventListener("click", (event) => {
-        // const displayDivString = displayDiv.textContent;
-
         if (typeof event.target.textContent === "string" && 
             event.target.textContent.length === 1) {
             // A button has been clicked, and its not the clear button.
             const characterClicked = event.target.textContent;
+
             if (!operators.includes(characterClicked)) {
                 // A digit has been entered.
-                if (clearDisplayOnNextDigit) {
+                if (lastOperation === "=") {
                     clearTextFromDiv(displayDiv);
-                    clearDisplayOnNextDigit = false;
-                }
-                if (!leftOperandSet) {
+                    resetData();
+                    lastOperation = "";
                     leftOperand += characterClicked;
                 }
                 else {
-                    rightOperand += characterClicked;
+                    if (clearDisplayOnNextDigit) {
+                        clearTextFromDiv(displayDiv);
+                        clearDisplayOnNextDigit = false;
+                    }
+                    if (!leftOperandSet) {
+                        leftOperand += characterClicked;
+                    }
+                    else {
+                        rightOperand += characterClicked;
+                    }
                 }
                 addTextToDiv(displayDiv, characterClicked);
             }
             else if (operators.includes(characterClicked)) {
                 // An operator has been clicked.
+                lastOperation = characterClicked;
                 if (!leftOperandSet) {
                     clearDisplayOnNextDigit = true;
                     leftOperandSet = true;
                     operator = characterClicked;
                 }
                 else if (rightOperand !== "") {
-                    // Operater is either = or there is already an expression such as
+                    // Operator is either = or there is already an expression such as
                     // 5 + 3.
                     calculateResult(leftOperand, operator, rightOperand);
                     temp = result;
