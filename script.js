@@ -31,3 +31,16 @@ function operate(leftOperand, operator, rightOperand) {
 let leftOperand;
 let operator;
 let rightOperand;
+
+
+window.addEventListener("load", () => {
+    const buttonsDiv = document.querySelector(".buttons");
+    const displayDiv = document.querySelector(".display");
+    buttonsDiv.addEventListener("click", (event) => {
+        if (typeof event.target.textContent === "string" && 
+            event.target.textContent.length === 1) {
+            const characterClicked = event.target.textContent;
+            displayDiv.textContent += characterClicked;
+        }
+    });
+});
